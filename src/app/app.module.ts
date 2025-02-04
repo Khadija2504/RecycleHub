@@ -6,12 +6,14 @@ import { AppComponent } from './app.component';
 import { AuthComponent } from './auth/auth.component';
 import { UnauthorizeComponent } from './unauthorize/unauthorize.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { ProfileComponent } from './profile/profile.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     AuthComponent,
     UnauthorizeComponent,
+    ProfileComponent,
   ],
   imports: [
     BrowserModule,

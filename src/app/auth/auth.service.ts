@@ -8,6 +8,7 @@ import { catchError } from 'rxjs/operators';
 export class AuthService {
 
   private usersKey = 'users';
+  private currentUser = 'currentUser';
   private staticUsers = [
     {
       firstName: 'John',
@@ -43,6 +44,11 @@ export class AuthService {
 
   private loadUsers(): any[] {
     const data = localStorage.getItem(this.usersKey);
+    return data ? JSON.parse(data) : [];
+  }
+
+  private loggedinUser() : any[] {
+    const data= localStorage.getItem(this.currentUser);
     return data ? JSON.parse(data) : [];
   }
 

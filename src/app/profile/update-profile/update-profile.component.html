@@ -1,0 +1,30 @@
+<div class="update-profile-container">
+    <h2>Update Profile</h2>
+  
+    <form [formGroup]="profileForm" (ngSubmit)="updateProfile()">
+      <label>First Name</label>
+      <input type="text" formControlName="firstName">
+  
+      <label>Last Name</label>
+      <input type="text" formControlName="lastName">
+  
+      <label>Email</label>
+      <input type="email" formControlName="email">  <!-- ❌ Removed `disabled` -->
+  
+      <label>Phone</label>
+      <input type="text" formControlName="phone">
+  
+      <label>Address</label>
+      <input type="text" formControlName="address">
+  
+      <label>Birth Date</label>
+      <input type="date" formControlName="birthDate">
+  
+      <label>Profile Photo</label>
+      <input type="file" (change)="onFileSelected($event)">
+      <img *ngIf="profilePhotoUrl" [src]="profilePhotoUrl" alt="Profile Photo" class="profile-photo">
+  
+      <button type="submit" class="save-btn">Save Changes</button>
+    </form>
+  </div>
+  
