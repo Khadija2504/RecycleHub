@@ -4,7 +4,12 @@
         class="hidden sm:grid sm:size-20 sm:shrink-0 sm:place-content-center sm:rounded-full sm:border-2 sm:border-indigo-500"
         aria-hidden="true"
       >
-        <img *ngIf="user.profilePhoto" [src]="user.profilePhoto" alt="Profile Photo">
+        <div class="hidden sm:block sm:shrink-0">
+            <img
+            *ngIf="user.profilePhoto" [src]="user.profilePhoto" alt="Profile Photo"
+              class="size-20 rounded-full object-cover shadow-xs"
+            />
+          </div>
       </div>
   
       <div>

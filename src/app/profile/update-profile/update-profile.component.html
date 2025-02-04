@@ -1,30 +1,107 @@
-<div class="update-profile-container">
-    <h2>Update Profile</h2>
+<div class="mx-auto max-w-screen-xl px-4 py-16 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-lg text-center">
+      <h1 class="text-2xl font-bold sm:text-3xl">Update Profile</h1>
+
+    </div>
   
-    <form [formGroup]="profileForm" (ngSubmit)="updateProfile()">
-      <label>First Name</label>
-      <input type="text" formControlName="firstName">
+    <form [formGroup]="profileForm" (ngSubmit)="updateProfile()" class="mx-auto mt-8 mb-0 max-w-md space-y-4">
+      <div>
+        <label for="firstName" class="sr-only">First Name</label>
   
-      <label>Last Name</label>
-      <input type="text" formControlName="lastName">
+        <div class="relative">
+          <input
+            formControlName="firstName"
+            type="text"
+            class="w-full rounded-lg border-gray-200 p-4 pe-12 text-sm shadow-xs"
+            placeholder="Enter ur first name"
+          />
   
-      <label>Email</label>
-      <input type="email" formControlName="email">  <!-- ❌ Removed `disabled` -->
+        </div>
+      </div>
+
+      <div>
+        <label for="lastName" class="sr-only">Last name</label>
   
-      <label>Phone</label>
-      <input type="text" formControlName="phone">
+        <div class="relative">
+          <input
+            formControlName="lastName"
+            type="text"
+            class="w-full rounded-lg border-gray-200 p-4 pe-12 text-sm shadow-xs"
+            placeholder="Enter ur last name"
+          />
   
-      <label>Address</label>
-      <input type="text" formControlName="address">
+        </div>
+      </div>
+
+      <div>
+        <label for="phone" class="sr-only">Phone</label>
   
-      <label>Birth Date</label>
-      <input type="date" formControlName="birthDate">
+        <div class="relative">
+          <input
+            formControlName="phone"
+            type="text"
+            class="w-full rounded-lg border-gray-200 p-4 pe-12 text-sm shadow-xs"
+            placeholder="Enter ur phone num"
+          />
   
-      <label>Profile Photo</label>
-      <input type="file" (change)="onFileSelected($event)">
-      <img *ngIf="profilePhotoUrl" [src]="profilePhotoUrl" alt="Profile Photo" class="profile-photo">
+        </div>
+      </div>
+
+      <div>
+        <label for="address" class="sr-only">Address</label>
   
-      <button type="submit" class="save-btn">Save Changes</button>
+        <div class="relative">
+          <input
+            formControlName="address"
+            type="text"
+            class="w-full rounded-lg border-gray-200 p-4 pe-12 text-sm shadow-xs"
+            placeholder="Enter ur address"
+          />
+  
+        </div>
+      </div>
+  
+      <div>
+        <label for="birthDate" class="sr-only">birth date</label>
+  
+        <div class="relative">
+          <input
+          formControlName="birthDate"
+            type="date"
+            class="w-full rounded-lg border-gray-200 p-4 pe-12 text-sm shadow-xs"
+            placeholder="Enter birth date"
+          />
+  
+        </div>
+      </div>
+
+      <div>
+        <label for="photoProfile" class="sr-only">photo profile</label>
+  
+        <div class="relative">
+          <input
+          type="file" (change)="onFileSelected($event)"
+            class="w-full rounded-lg border-gray-200 p-4 pe-12 text-sm shadow-xs"
+            placeholder="Enter ur pic"
+          />
+  
+        </div>
+      </div>
+      <div class="hidden sm:block sm:shrink-0">
+        <img
+        *ngIf="profilePhotoUrl" [src]="profilePhotoUrl" alt="Profile Photo"
+          class="size-16 rounded-lg object-cover shadow-xs"
+        />
+      </div>
+
+      <div class="flex items-center justify-between">
+        <button
+          type="submit"
+          class="inline-block rounded-lg bg-blue-500 px-5 py-3 text-sm font-medium text-white"
+        >
+          save changes
+        </button>
+      </div>
     </form>
   </div>
   
