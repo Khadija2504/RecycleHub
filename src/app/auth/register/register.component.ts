@@ -29,7 +29,8 @@ export class RegisterComponent implements OnInit {
       phone: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
       address: [''],
       birthDate: ['', Validators.required],
-      profilePhoto: ['']
+      profilePhoto: [''],
+      role: ['Individual'],
     });
   }
 
@@ -51,7 +52,7 @@ export class RegisterComponent implements OnInit {
     this.registerForm.reset();
     this.errorMessage = "";
     alert("Registration successful!");
-    this.router.navigate(['/login']);
+    this.router.navigate(['/auth/login']);
   }
 
   onFileSelected(event: any) {
