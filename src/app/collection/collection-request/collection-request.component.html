@@ -1,0 +1,31 @@
+<div class="collection-request-container">
+    <h2>Submit a Collection Request</h2>
+  
+    <form [formGroup]="collectionForm" (ngSubmit)="submitRequest()">
+      <label>Waste Type</label>
+      <select formControlName="wasteType">
+        <option value="">Select Waste Type</option>
+        <option value="Plastic">Plastic</option>
+        <option value="Glass">Glass</option>
+        <option value="Paper">Paper</option>
+        <option value="Organic">Organic</option>
+        <option value="Electronic">Electronic</option>
+      </select>
+  
+      <label>Estimated Weight (kg)</label>
+      <input type="number" formControlName="estimatedWeight">
+  
+      <label>Address</label>
+      <input type="text" formControlName="address">
+  
+      <label>Time Slot</label>
+      <input type="datetime-local" formControlName="timeSlot">
+  
+      <label>Upload Photo (Optional)</label>
+      <input type="file" (change)="onFileSelected($event)">
+      <img *ngIf="selectedImage" [src]="selectedImage" alt="Waste Photo" class="waste-photo">
+  
+      <button type="submit" class="submit-btn">Submit Request</button>
+    </form>
+</div>
+  
