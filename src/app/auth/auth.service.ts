@@ -8,10 +8,38 @@ import { catchError } from 'rxjs/operators';
 export class AuthService {
 
   private usersKey = 'users';
+  private staticUsers = [
+    {
+      firstName: 'John',
+      lastName: 'Doe',
+      email: 'collector1@example.com',
+      password: 'password123',
+      phone: '0123456789',
+      address: 'casablanca',
+      birthDate: '1990-01-01',
+      profilePhoto: 'url-to-photo',
+      role: 'Collector'
+    },
+    {
+      firstName: 'Jane',
+      lastName: 'Smith',
+      email: 'collector2@example.com',
+      password: 'password456',
+      phone: '0987654321',
+      address: 'safi',
+      birthDate: '1985-05-10',
+      profilePhoto: 'url-to-photo',
+      role: 'Collector'
+    }
+  ];
   private usersSubject = new BehaviorSubject<any[]>(this.loadUsers());
   users$ = this.usersSubject.asObservable();
 
-  constructor() {}
+  constructor() {
+    if (this.loadUsers().length === 0) {
+      this.saveUsers(this.staticUsers);
+    }
+  }
 
   private loadUsers(): any[] {
     const data = localStorage.getItem(this.usersKey);
@@ -20,6 +48,7 @@ export class AuthService {
 
   private saveUsers(users: any[]): void {
     localStorage.setItem(this.usersKey, JSON.stringify(users));
+    this.usersSubject.next(users);
   }
 
   getUsers(): Observable<any[]> {
