@@ -1,31 +1,49 @@
 <div class="collection-request-container">
-    <h2>Submit a Collection Request</h2>
+    <h2>Demande de collecte</h2>
   
     <form [formGroup]="collectionForm" (ngSubmit)="submitRequest()">
-      <label>Waste Type</label>
-      <select formControlName="wasteType">
-        <option value="">Select Waste Type</option>
-        <option value="Plastic">Plastic</option>
-        <option value="Glass">Glass</option>
-        <option value="Paper">Paper</option>
-        <option value="Organic">Organic</option>
-        <option value="Electronic">Electronic</option>
-      </select>
+      <div formArrayName="wasteItems">
+        <div *ngFor="let item of wasteItems.controls; let i = index;" [formGroupName]="i">
+            <label>Type de Déchets</label>
+            <select formControlName="wasteType">
+                <option value="">Select Waste Type</option>
+                <option value="Plastic">Plastic</option>
+                <option value="Glass">Glass</option>
+                <option value="Paper">Paper</option>
+                <option value="Organic">Organic</option>
+                <option value="Electronic">Electronic</option>
+              </select>
+      
+            <label>Poids Estimé (en grammes)</label>
+            <input type="number" formControlName="estimatedWeight" required>
+      
+            <button type="button" (click)="removeWasteItem(i)" *ngIf="wasteItems.length > 1">
+              Supprimer
+            </button>
+          </div>
+        <button type="button" (click)="addWasteItem()">Ajouter un type de déchet</button>
+      </div>
   
-      <label>Estimated Weight (kg)</label>
-      <input type="number" formControlName="estimatedWeight">
+      <label>Photos des déchets</label>
+        <input type="file" formControlName="images" (change)="onFileSelected($event)" accept="image/*" multiple>
+
+        <div *ngIf="selectedImages.length > 0">
+            <h4>Aperçu des images :</h4>
+            <div *ngFor="let image of selectedImages">
+              <img [src]="image" class="preview-image" alt="Aperçu de l'image">
+            </div>
+          </div>
   
-      <label>Address</label>
+      <label>Adresse</label>
       <input type="text" formControlName="address">
   
-      <label>Time Slot</label>
-      <input type="datetime-local" formControlName="timeSlot">
+      <label>Créneau horaire (09h00 - 18h00)</label>
+      <input type="time" formControlName="timeSlot">
   
-      <label>Upload Photo (Optional)</label>
-      <input type="file" (change)="onFileSelected($event)">
-      <img *ngIf="selectedImage" [src]="selectedImage" alt="Waste Photo" class="waste-photo">
+      <label>Notes supplémentaires</label>
+      <textarea formControlName="notes"></textarea>
   
-      <button type="submit" class="submit-btn">Submit Request</button>
+      <button type="submit">Soumettre la demande</button>
     </form>
-</div>
+  </div>
   
