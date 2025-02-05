@@ -3,20 +3,41 @@ import { Injectable } from '@angular/core';
 @Injectable({
   providedIn: 'root'
 })
-export class CollectionRequestService {
-
+export class CollectionService {
   private requestsKey = 'collectionRequests';
+  private requestIdKey = 'requestId';
+  private requests: any[] = [];
+  private requestId = 1;
 
-  constructor() {}
-
-  getRequests(): any[] {
-    const data = localStorage.getItem(this.requestsKey);
-    return data ? JSON.parse(data) : [];
+  constructor() {
+    this.loadRequests();
   }
 
-  addRequest(request: any): void {
-    const requests = this.getRequests();
-    requests.push(request);
-    localStorage.setItem(this.requestsKey, JSON.stringify(requests));
+  private loadRequests(): void {
+    const storedRequests = localStorage.getItem(this.requestsKey);
+    this.requests = storedRequests ? JSON.parse(storedRequests) : [];
+
+    const storedRequestId = localStorage.getItem(this.requestIdKey);
+    this.requestId = storedRequestId ? parseInt(storedRequestId, 10) : 1;
+  }
+
+  private saveRequests(): void {
+    localStorage.setItem(this.requestsKey, JSON.stringify(this.requests));
+    localStorage.setItem(this.requestIdKey, this.requestId.toString());
+  }
+
+  getUserRequests(): any[] {
+    return this.requests.filter(request => request.status === 'en attente');
+  }
+
+  addRequest(requestData: any): void {
+    requestData.id = this.requestId++;
+    this.requests.push(requestData);
+    this.saveRequests();
+  }
+
+  deleteRequest(requestId: number): void {
+    this.requests = this.requests.filter(request => request.id !== requestId);
+    this.saveRequests();
   }
 }
