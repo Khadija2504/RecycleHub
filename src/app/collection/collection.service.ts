@@ -8,7 +8,7 @@ export class CollectionService {
   private requestIdKey = 'requestId';
   private requests: any[] = [];
   private requestId = 1;
-
+  private currentUser = 'currentUser';
   constructor() {
     this.loadRequests();
   }
@@ -21,13 +21,28 @@ export class CollectionService {
     this.requestId = storedRequestId ? parseInt(storedRequestId, 10) : 1;
   }
 
+  loggedinUser(): any {
+    const data = localStorage.getItem(this.currentUser);
+    return data ? JSON.parse(data) : null;
+  }
+
   private saveRequests(): void {
     localStorage.setItem(this.requestsKey, JSON.stringify(this.requests));
     localStorage.setItem(this.requestIdKey, this.requestId.toString());
   }
 
   getUserRequests(): any[] {
-    return this.requests.filter(request => request.status === 'en attente');
+    console.log('requests:', this.requests);
+    
+    console.log('loggedin user:', this.loggedinUser()?.email);
+  
+    const userRequests = this.requests.filter(
+      request => request.status === 'en attente' && request.userEmail === this.loggedinUser()?.email
+    );
+  
+    console.log('filtered requests:', userRequests);
+  
+    return userRequests;
   }
 
   addRequest(requestData: any): void {

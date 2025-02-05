@@ -4,11 +4,13 @@ import { CommonModule } from '@angular/common';
 import { CollectionRoutingModule } from './collection-routing.module';
 import { CollectionRequestComponent } from './collection-request/collection-request.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { CollectionsListComponent } from './collections-list/collections-list.component';
 
 
 @NgModule({
   declarations: [
-    CollectionRequestComponent
+    CollectionRequestComponent,
+    CollectionsListComponent
   ],
   imports: [
     CommonModule,
