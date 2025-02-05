@@ -47,9 +47,9 @@ export class AuthService {
     return data ? JSON.parse(data) : [];
   }
 
-  private loggedinUser() : any[] {
-    const data= localStorage.getItem(this.currentUser);
-    return data ? JSON.parse(data) : [];
+  loggedinUser(): any {
+    const data = localStorage.getItem(this.currentUser);
+    return data ? JSON.parse(data) : null;
   }
 
   private saveUsers(users: any[]): void {

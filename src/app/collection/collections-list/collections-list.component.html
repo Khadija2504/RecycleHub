@@ -1,0 +1,26 @@
+<div class="collections-container">
+    <h2>Mes Demandes de Collecte</h2>
+  
+    <div *ngIf="collectionRequests.length === 0">
+      <p>Aucune demande de collecte trouvée.</p>
+    </div>
+  
+    <ul *ngIf="collectionRequests.length > 0">
+      <li *ngFor="let request of collectionRequests">
+        <div class="request-details">
+          <strong>Déchets :</strong> {{ request.wasteItems | json }} <br>
+          <strong>Poids Total :</strong> {{ getTotalWeight(request.wasteItems) }}g <br>
+          <strong>Adresse :</strong> {{ request.address }} <br>
+          <strong>Créneau :</strong> {{ request.timeSlot }} <br>
+          <strong>Statut :</strong> <span [ngClass]="{'pending': request.status === 'en attente', 'confirmed': request.status === 'validée', 'rejected': request.status === 'rejetée'}">
+            {{ request.status }}
+          </span> <br>
+  
+          <div class="request-actions">
+            <button *ngIf="request.status === 'en attente'" (click)="deleteRequest(request.id)" class="delete-btn">Supprimer</button>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </div>
+  

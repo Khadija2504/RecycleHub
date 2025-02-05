@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CollectionService } from '../collection.service';
+import { AuthService } from '../../auth/auth.service';
 
 @Component({
   selector: 'app-collection-request',
@@ -13,13 +14,15 @@ export class CollectionRequestComponent implements OnInit {
   selectedImages: (string | ArrayBuffer | null)[] = [];
   existingRequests: any[] = [];
 
-  constructor(private fb: FormBuilder, private collectionService: CollectionService) {
+  constructor(private fb: FormBuilder, private collectionService: CollectionService, private authService: AuthService) {
+    const user = this.authService.loggedinUser();
     this.collectionForm = this.fb.group({
       wasteItems: this.fb.array([this.createWasteItem()]),
       address: ['', Validators.required],
       timeSlot: ['', [Validators.required, this.validateTimeSlot]],
       notes: [''],
       status: ['en attente'],
+      userEmail: [user?.email],
       images: [[]]
     });
   }
