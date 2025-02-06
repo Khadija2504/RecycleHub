@@ -1,24 +1,43 @@
-<div class="collections-container">
-    <h2>Mes Demandes de Collecte</h2>
+<div class="collections-container p-6 bg-gray-50 rounded-lg shadow-lg">
+    <h2 class="text-2xl font-semibold text-gray-800 mb-4">Mes Demandes de Collecte</h2>
   
-    <div *ngIf="collectionRequests.length === 0">
+    <div *ngIf="collectionRequests.length === 0" class="text-center text-gray-500">
       <p>Aucune demande de collecte trouvée.</p>
     </div>
   
     <ul *ngIf="collectionRequests.length > 0">
-      <li *ngFor="let request of collectionRequests">
+      <li *ngFor="let request of collectionRequests" class="mb-6 p-4 border border-gray-300 rounded-lg bg-white shadow-sm hover:shadow-lg transition-shadow">
         <div class="request-details">
-          <strong>Déchets :</strong> {{ request.wasteItems | json }} <br>
-          <strong>Poids Total :</strong> {{ getTotalWeight(request.wasteItems) }}g <br>
-          <strong>Adresse :</strong> {{ request.address }} <br>
-          <strong>Créneau :</strong> {{ request.timeSlot }} <br>
-          <strong>Statut :</strong> <span [ngClass]="{'pending': request.status === 'en attente', 'confirmed': request.status === 'validée', 'rejected': request.status === 'rejetée'}">
-            {{ request.status }}
-          </span> <br>
+          <strong class="block font-medium text-gray-700">Déchets :</strong>
+          <p class="text-sm text-gray-600">{{ request.wasteItems | json }}</p>
+          
+          <strong class="block font-medium text-gray-700 mt-2">Poids Total :</strong>
+          <p class="text-sm text-gray-600">{{ getTotalWeight(request.wasteItems) }}g</p>
   
-          <div class="request-actions">
-            <button *ngIf="request.status === 'en attente'" (click)="deleteRequest(request.id)" class="delete-btn">Supprimer</button>
-          </div>
+          <strong class="block font-medium text-gray-700 mt-2">Adresse :</strong>
+          <p class="text-sm text-gray-600">{{ request.address }}</p>
+  
+          <strong class="block font-medium text-gray-700 mt-2">Créneau :</strong>
+          <p class="text-sm text-gray-600">{{ request.timeSlot }}</p>
+  
+          <strong class="block font-medium text-gray-700 mt-2">Statut :</strong>
+          <span [ngClass]="{
+            'text-yellow-600': request.status === 'en attente',
+            'text-green-600': request.status === 'validée',
+            'text-red-600': request.status === 'rejetée'
+          }" class="text-sm font-medium">
+            {{ request.status }}
+          </span>
+        </div>
+  
+        <div class="request-actions mt-4">
+          <button *ngIf="request.status === 'en attente'" (click)="deleteRequest(request.id)" class="delete-btn inline-block px-4 py-2 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700 transition duration-200 ease-in-out">
+            🗑️ Supprimer
+          </button>
+          
+          <a *ngIf="request.status === 'en attente'" [routerLink]="['/collection/edit-collection', request.id]" class="inline-block px-4 py-2 text-white bg-blue-600 rounded-lg text-sm hover:bg-blue-700 transition duration-200 ease-in-out mt-2 ml-2">
+            ✏️ Modifier
+          </a>
         </div>
       </li>
     </ul>
