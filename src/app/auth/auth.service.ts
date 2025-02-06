@@ -47,11 +47,6 @@ export class AuthService {
     return data ? JSON.parse(data) : [];
   }
 
-  loggedinUser(): any {
-    const data = localStorage.getItem(this.currentUser);
-    return data ? JSON.parse(data) : null;
-  }
-
   private saveUsers(users: any[]): void {
     localStorage.setItem(this.usersKey, JSON.stringify(users));
     this.usersSubject.next(users);
@@ -76,5 +71,30 @@ export class AuthService {
     users.push(user);
     this.saveUsers(users);
     this.usersSubject.next(users);
+  }
+
+  getUserRole(): string | null {
+    const user = this.loggedinUser();
+    if (user) {      
+      try {
+        return this.loggedinUser()?.role;
+      } catch (e) {
+        return null;
+      }
+    }
+    return null;
+  }
+
+  loggedinUser(): any {
+    const data = localStorage.getItem(this.currentUser);
+    return data ? JSON.parse(data) : null;
+  }
+
+  isLoggedIn(): boolean {
+    return !!this.loggedinUser();
+  }
+
+  logout() {
+    localStorage.removeItem('currentUser');
   }
 }

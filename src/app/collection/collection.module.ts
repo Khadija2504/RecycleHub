@@ -6,13 +6,15 @@ import { CollectionRequestComponent } from './collection-request/collection-requ
 import { ReactiveFormsModule } from '@angular/forms';
 import { CollectionsListComponent } from './collections-list/collections-list.component';
 import { EditCollectionComponent } from './edit-collection/edit-collection.component';
+import { RequestsListComponent } from './requests-list/requests-list.component';
 
 
 @NgModule({
   declarations: [
     CollectionRequestComponent,
     CollectionsListComponent,
-    EditCollectionComponent
+    EditCollectionComponent,
+    RequestsListComponent
   ],
   imports: [
     CommonModule,

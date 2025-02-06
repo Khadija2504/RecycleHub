@@ -60,6 +60,24 @@ export class CollectionService {
     return userRequests;
 }
 
+  getUserRequestsByCity() : any[] {
+    console.log('requests:', this.requests);
+    if (!Array.isArray(this.requests)) {
+      console.error('this.requests is not an array!', this.requests);
+      return [];
+    }
+
+    const address = this.loggedinUser()?.address;
+    console.log('loggedin user:', address);
+
+    const userRequests = this.requests.filter(
+      request => request.status === 'en attente' && request.address === address
+    );
+
+    console.log('filtered requests:', userRequests);
+    return userRequests;
+  }
+
   addRequest(requestData: any): void {
     requestData.id = this.requestId++;
     this.requests.push(requestData);
