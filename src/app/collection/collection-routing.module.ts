@@ -3,11 +3,27 @@ import { RouterModule, Routes } from '@angular/router';
 import { CollectionRequestComponent } from './collection-request/collection-request.component';
 import { CollectionsListComponent } from './collections-list/collections-list.component';
 import { EditCollectionComponent } from './edit-collection/edit-collection.component';
+import { RequestsListComponent } from './requests-list/requests-list.component';
+import { AuthGuard } from '../auth/auth.guard';
+import { RoleGuard } from '../auth/role.guard';
 
 const routes: Routes = [
-  {path: 'collection-request', component: CollectionRequestComponent},
-  {path: 'collections-list', component: CollectionsListComponent},
-  {path: 'edit-collection/:id', component: EditCollectionComponent}
+  {path: 'collection-request', component: CollectionRequestComponent,
+    canActivate: [AuthGuard, RoleGuard],
+    data: { role: 'Individual' }
+  },
+  {path: 'collections-list', component: CollectionsListComponent,
+    canActivate: [AuthGuard, RoleGuard],
+    data: { role: 'Individual' }
+  },
+  {path: 'edit-collection/:id', component: EditCollectionComponent,
+    canActivate: [AuthGuard, RoleGuard],
+    data: { role: 'Individual' }
+  },
+  {path: 'requests-list', component: RequestsListComponent,
+    canActivate: [AuthGuard, RoleGuard],
+    data: { role: 'Collector' }
+  },
 ];
 
 @NgModule({

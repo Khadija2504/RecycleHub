@@ -9,10 +9,8 @@ const routes: Routes = [
   {path: 'profile', loadChildren: () => import('./profile/profile.module').then(m => m.ProfileModule),
     canActivate: [AuthGuard, RoleGuard],
     data: { role: 'Individual' }},
-  {path: 'collection', loadChildren: () => import('./collection/collection.module').then(m => m.CollectionModule),
-    canActivate: [AuthGuard, RoleGuard],
-    data: { role: 'Individual' }},
-  { path: '', redirectTo: '/auth', pathMatch: 'full' },
+  {path: 'collection', loadChildren: () => import('./collection/collection.module').then(m => m.CollectionModule)},
+  { path: '', redirectTo: '/auth', pathMatch: 'full' }, 
   { path: '**', component: UnauthorizeComponent},
 ];
 
