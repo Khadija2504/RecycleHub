@@ -104,7 +104,13 @@ export class CollectionService {
       request => request.address === address
     );
 
-    console.log('filtered requests:', userRequests);
+    console.log(this.requests.filter(
+      request => request.id === 18
+    )
+);
+    
+
+    // console.log('filtered requests:', userRequests);
     return userRequests;
   }
 
@@ -124,6 +130,17 @@ export class CollectionService {
     if (index !== -1) {
       this.requests[index] = { ...this.requests[index], ...updatedData };
       this.saveRequests();
+    } else {
+      console.error(`Request with ID ${requestId} not found.`);
+    }
+  }
+
+  updateRequestStatus(requestId: number, newStatus: string): void {
+    const request = this.requests.find((req) => req.id === requestId);
+    if (request) {
+      request.status = newStatus;
+      this.saveRequests();
+      console.log(`Request ${requestId} status updated to ${newStatus}`);
     } else {
       console.error(`Request with ID ${requestId} not found.`);
     }

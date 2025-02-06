@@ -30,4 +30,9 @@ export class PendingRequestsListComponent {
       this.collectionService.deleteRequest(requestId);
       this.loadUserRequests();
     }
+
+    updateStatus(requestId: number, newStatus: string): void {
+      this.collectionService.updateRequestStatus(requestId, newStatus);
+      this.loadUserRequests();
+    }
 }

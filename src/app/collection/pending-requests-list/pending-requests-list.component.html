@@ -1,5 +1,5 @@
 <div class="collections-container p-6 bg-gray-50 rounded-lg shadow-lg">
-    <h2 class="text-2xl font-semibold text-gray-800 mb-4">Mes Demandes de Collecte</h2>
+    <h2 class="text-2xl font-semibold text-gray-800 mb-4">Les demandes en attente</h2>
   
     <div *ngIf="collectionRequests.length === 0" class="text-center text-gray-500">
       <p>Aucune demande de collecte trouvée.</p>
@@ -24,12 +24,30 @@
           <span [ngClass]="{
             'text-yellow-600': request.status === 'en attente',
             'text-green-600': request.status === 'validée',
+            'text-blue-600': request.status === 'en cours',
+            'text-purple-600': request.status === 'occupée',
             'text-red-600': request.status === 'rejetée'
           }" class="text-sm font-medium">
             {{ request.status }}
           </span>
         </div>
+  
+        <div class="mt-4 space-x-2">
+          <button
+            *ngIf="request.status === 'en attente'"
+            (click)="updateStatus(request.id, 'occupée')"
+            class="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors"
+          >
+            Accepter la collecte
+          </button>
+          <button
+            *ngIf="request.status === 'occupée'"
+            (click)="updateStatus(request.id, 'en cours')"
+            class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+          >
+            Commencer la collecte
+          </button>
+        </div>
       </li>
     </ul>
   </div>
-  
