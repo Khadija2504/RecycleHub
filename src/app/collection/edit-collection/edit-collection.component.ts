@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CollectionService } from '../collection.service';
+import { AuthService } from '../../auth/auth.service';
 
 @Component({
   selector: 'app-edit-collection',
@@ -10,101 +11,134 @@ import { CollectionService } from '../collection.service';
   styleUrls: ['./edit-collection.component.css']
 })
 export class EditCollectionComponent implements OnInit {
-  editForm: FormGroup;
-  wasteTypes = ['Plastic', 'Glass', 'Paper', 'Organic', 'Electronic'];
-  request: any;
+  collectionForm: FormGroup;
+  selectedImages: (string | ArrayBuffer | null)[] = [];
+  requestId: number | null = null;
 
   constructor(
-    private fb: FormBuilder, 
+    private fb: FormBuilder,
+    private collectionService: CollectionService,
+    private authService: AuthService,
     private route: ActivatedRoute,
-    private router: Router,
-    private collectionService: CollectionService
+    private router: Router
   ) {
-    this.editForm = this.fb.group({
-      wasteType: ['', Validators.required],
-      images: [[]], 
-      estimatedWeight: ['', [Validators.required, Validators.min(1000)]],
+    this.collectionForm = this.fb.group({
+      wasteItems: this.fb.array([this.createWasteItem()]),
       address: ['', Validators.required],
       timeSlot: ['', [Validators.required, this.validateTimeSlot]],
-      notes: ['']
+      notes: [''],
+      status: ['en attente'],
+      userEmail: [this.authService.loggedinUser()?.email],
+      images: [[]],
     });
   }
 
   ngOnInit(): void {
-    const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
-      this.loadRequest(Number(id));
-    }
+    this.route.params.subscribe((params) => {
+      this.requestId = +params['id'];
+      this.loadRequestForEdit(this.requestId);
+    });
   }
-  
-  loadRequest(id: number): void {
-    const requests = this.collectionService.getUserRequests();
-    console.log('Stored requests:', requests);
-  
-    const request = requests.find(req => req.id === id);
-  
-    if (request) {
-      this.request = request;
-      console.log('Loaded request:', this.request);
-      this.patchFormData();
-    } else {
-      console.error(`Request with ID ${id} not found.`);
+
+  createWasteItem(): FormGroup {
+    return this.fb.group({
+      wasteType: ['', Validators.required],
+      estimatedWeight: ['', [Validators.required, Validators.min(1000)]],
+    });
+  }
+
+  get wasteItems(): FormArray {
+    return this.collectionForm.get('wasteItems') as FormArray;
+  }
+
+  addWasteItem(): void {
+    this.wasteItems.push(this.createWasteItem());
+  }
+
+  removeWasteItem(index: number): void {
+    this.wasteItems.removeAt(index);
+  }
+
+  onFileSelected(event: any): void {
+    const files = event.target.files;
+    if (!files || files.length === 0) return;
+
+    this.selectedImages = [];
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const reader = new FileReader();
+
+      reader.onload = (e) => {
+        if (e.target?.result) {
+          this.selectedImages.push(e.target.result as string);
+        }
+      };
+
+      reader.readAsDataURL(file);
     }
   }
 
-  patchFormData(): void {
-    if (this.request) {
-      const wasteItem = this.request.wasteItems[0] || {}; 
-      console.log('Waste Item:', wasteItem);
-      
-      this.editForm.patchValue({
-        wasteType: wasteItem.wasteType || '',
-        images: this.request.images || [],
-        estimatedWeight: wasteItem.estimatedWeight || '',
-        address: this.request.address,
-        timeSlot: this.request.timeSlot,
-        notes: this.request.notes,
-        id: this.request.id,
-
-      });
-      
-      console.log('Form after patching:', this.editForm.value);
-    }
-  }
-  
   validateTimeSlot(control: any): { [key: string]: any } | null {
-    const selectedTime = control.value;
-    if (!selectedTime) return null;
-    const [hours] = selectedTime.split(':').map(Number);
-    return hours < 9 || hours > 18 ? { invalidTime: true } : null;
+    const time = control.value;
+    if (!time) return null;
+
+    const [hours, minutes] = time.split(':').map(Number);
+    if (hours < 9 || hours > 18 || (hours === 18 && minutes > 0)) {
+      return { invalidTimeSlot: true };
+    }
+    return null;
   }
 
-  onImageUpload(event: any): void {
-    const files = Array.from(event.target.files);
-    this.editForm.patchValue({ images: files });
-  }
-
-  saveEdit(): void {
-    console.log("Save edit function triggered");
-  
-    if (this.editForm.valid) {
-      const updatedData = this.editForm.value;
-      
-      if (this.request && this.request.id) {
-        this.collectionService.updateRequest(this.request.id, updatedData);
-        console.log("Updated request:", updatedData);
-        
-        this.router.navigate(['/collection/collections-list']);
-      } else {
-        console.error("Request ID is missing. Unable to update.");
+  loadRequestForEdit(requestId: number): void {
+    const request = this.collectionService.getRequestById(requestId);
+    if (request) {
+      while (this.wasteItems.length) {
+        this.wasteItems.removeAt(0);
       }
+
+      this.collectionForm.patchValue({
+        address: request.address,
+        timeSlot: request.timeSlot,
+        notes: request.notes,
+        status: request.status,
+        userEmail: request.userEmail,
+        images: request.images,
+      });
+
+      request.wasteItems.forEach((item: any) => {
+        const wasteItemGroup = this.createWasteItem();
+        wasteItemGroup.patchValue(item);
+        this.wasteItems.push(wasteItemGroup);
+      });
+
+      this.selectedImages = request.images || [];
     } else {
-      console.warn("Form is invalid. Please check your inputs.");
+      console.error('Request not found');
     }
   }
-  
 
-  cancelEdit(): void {
-    this.router.navigate(['/collection']);
+  submitRequest(): void {
+    if (this.collectionForm.invalid) {
+      alert('Veuillez remplir tous les champs correctement.');
+      return;
+    }
+
+    const totalWeight = this.getTotalWeight();
+    if (totalWeight < 1000 || totalWeight > 10000) {
+      alert('Le poids total doit être entre 1000g et 10000g.');
+      return;
+    }
+
+    if (this.requestId) {
+      this.collectionService.updateRequest(this.requestId, this.collectionForm.value);
+      alert('Demande de collecte mise à jour avec succès !');
+      this.router.navigate(['/collection/requests-list']);
+    } else {
+      alert('ID de demande invalide.');
+    }
+  }
+
+  getTotalWeight(): number {
+    return this.wasteItems.value.reduce((total: number, item: any) => total + Number(item.estimatedWeight), 0);
   }
 }
