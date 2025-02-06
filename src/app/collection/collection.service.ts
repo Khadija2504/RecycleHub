@@ -13,7 +13,6 @@ export class CollectionService {
     this.loadRequests();
     console.log('Requests after loading:', this.requests);
   }
-  
 
   private loadRequests(): void {
     const storedRequests = localStorage.getItem(this.requestsKey);
@@ -60,6 +59,19 @@ export class CollectionService {
     return userRequests;
 }
 
+  getRequestById(id: number): any {
+    const requests = this.getUserRequests();
+    console.log('Stored requests:', requests);
+
+    const request = requests.find(req => req.id === id);
+
+    if (request) {
+      return request;
+    } else {
+      console.error(`Request with ID ${id} not found.`);
+    }
+  }
+
   getUserRequestsByCity() : any[] {
     console.log('requests:', this.requests);
     if (!Array.isArray(this.requests)) {
@@ -89,18 +101,11 @@ export class CollectionService {
     this.saveRequests();
   }
 
-  updateRequest(requestId: string, updatedData: any): void {
-    console.log('Requests:', this.requests);
-    
-    const index = this.requests.findIndex(req => String(req.id) === String(requestId));
-    console.log('Index:', index);    
-    
+  updateRequest(requestId: number, updatedData: any): void {
+    const index = this.requests.findIndex((request) => request.id === requestId);
     if (index !== -1) {
       this.requests[index] = { ...this.requests[index], ...updatedData };
-      console.log('Updated request:', this.requests[index]);
-  
       this.saveRequests();
-      console.log('Updated requests in localStorage:', localStorage.getItem(this.requestsKey));
     } else {
       console.error(`Request with ID ${requestId} not found.`);
     }
