@@ -9,7 +9,7 @@ import { CollectionService } from '../collection.service';
   styleUrl: './requests-list.component.css'
 })
 export class RequestsListComponent {
-collectionRequests: any[] = [];
+  collectionRequests: any[] = [];
   userId: number = 0;
 
   constructor(private collectionService: CollectionService) {}
@@ -19,7 +19,7 @@ collectionRequests: any[] = [];
   }
 
   loadUserRequests(): void {
-    this.collectionRequests = this.collectionService.getUserRequestsByCity();
+    this.collectionRequests = this.collectionService.getAllUserRequests();
   }
 
   getTotalWeight(wasteItems: any[]): number {
