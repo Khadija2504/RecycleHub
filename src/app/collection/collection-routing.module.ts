@@ -6,6 +6,7 @@ import { EditCollectionComponent } from './edit-collection/edit-collection.compo
 import { RequestsListComponent } from './requests-list/requests-list.component';
 import { AuthGuard } from '../auth/auth.guard';
 import { RoleGuard } from '../auth/role.guard';
+import { PendingRequestsListComponent } from './pending-requests-list/pending-requests-list.component';
 
 const routes: Routes = [
   {path: 'collection-request', component: CollectionRequestComponent,
@@ -24,6 +25,10 @@ const routes: Routes = [
     canActivate: [AuthGuard, RoleGuard],
     data: { role: 'Collector' }
   },
+  {path: 'pending-requests', component: PendingRequestsListComponent,
+    canActivate: [AuthGuard, RoleGuard],
+    data: {role: 'Collector'},
+  }
 ];
 
 @NgModule({
