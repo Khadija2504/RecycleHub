@@ -11,15 +11,26 @@ export class CollectionService {
   private currentUser = 'currentUser';
   constructor() {
     this.loadRequests();
+    console.log('Requests after loading:', this.requests);
   }
+  
 
   private loadRequests(): void {
     const storedRequests = localStorage.getItem(this.requestsKey);
-    this.requests = storedRequests ? JSON.parse(storedRequests) : [];
-
+    try {
+      this.requests = storedRequests ? JSON.parse(storedRequests) : [];
+      if (!Array.isArray(this.requests)) {
+        this.requests = [];
+      }
+    } catch (error) {
+      console.error('Error parsing requests from localStorage', error);
+      this.requests = [];
+    }
+  
     const storedRequestId = localStorage.getItem(this.requestIdKey);
     this.requestId = storedRequestId ? parseInt(storedRequestId, 10) : 1;
   }
+  
 
   loggedinUser(): any {
     const data = localStorage.getItem(this.currentUser);
@@ -29,21 +40,25 @@ export class CollectionService {
   private saveRequests(): void {
     localStorage.setItem(this.requestsKey, JSON.stringify(this.requests));
     localStorage.setItem(this.requestIdKey, this.requestId.toString());
-  }
+  }  
 
   getUserRequests(): any[] {
     console.log('requests:', this.requests);
-    
-    console.log('loggedin user:', this.loggedinUser()?.email);
-  
+    if (!Array.isArray(this.requests)) {
+      console.error('this.requests is not an array!', this.requests);
+      return [];
+    }
+
+    const userEmail = this.loggedinUser()?.email;
+    console.log('loggedin user:', userEmail);
+
     const userRequests = this.requests.filter(
-      request => request.status === 'en attente' && request.userEmail === this.loggedinUser()?.email
+      request => request.status === 'en attente' && request.userEmail === userEmail
     );
-  
+
     console.log('filtered requests:', userRequests);
-  
     return userRequests;
-  }
+}
 
   addRequest(requestData: any): void {
     requestData.id = this.requestId++;
@@ -55,4 +70,22 @@ export class CollectionService {
     this.requests = this.requests.filter(request => request.id !== requestId);
     this.saveRequests();
   }
+
+  updateRequest(requestId: string, updatedData: any): void {
+    console.log('Requests:', this.requests);
+    
+    const index = this.requests.findIndex(req => String(req.id) === String(requestId));
+    console.log('Index:', index);    
+    
+    if (index !== -1) {
+      this.requests[index] = { ...this.requests[index], ...updatedData };
+      console.log('Updated request:', this.requests[index]);
+  
+      this.saveRequests();
+      console.log('Updated requests in localStorage:', localStorage.getItem(this.requestsKey));
+    } else {
+      console.error(`Request with ID ${requestId} not found.`);
+    }
+  }
+  
 }

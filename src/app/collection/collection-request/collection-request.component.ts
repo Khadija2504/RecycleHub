@@ -100,6 +100,12 @@ export class CollectionRequestComponent implements OnInit {
       alert('Le poids total doit être entre 1000g et 10000g.');
       return;
     }
+
+    const newRequest = {
+      ...this.collectionForm.value,
+      id: Date.now(),
+      status: 'en attente'
+    };
   
     this.collectionForm.patchValue({ status: 'en attente' });
     this.collectionService.addRequest(this.collectionForm.value);

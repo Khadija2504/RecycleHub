@@ -1,0 +1,51 @@
+<div class="max-w-3xl mx-auto p-6 bg-white rounded-lg shadow-lg">
+    <h3 class="text-2xl font-semibold text-gray-800 mb-6 text-center">Modifier la demande</h3>
+  
+    <form [formGroup]="editForm" (ngSubmit)="saveEdit()">
+  
+      <div class="mb-4">
+        <label class="block text-gray-700 font-medium mb-2">Type de déchet</label>
+        <select formControlName="wasteType" class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <option *ngFor="let type of wasteTypes" [value]="type">{{ type }}</option>
+        </select>
+      </div>
+  
+      <div class="mb-4">
+        <label class="block text-gray-700 font-medium mb-2">Photos des déchets (optionnel)</label>
+        <input type="file" (change)="onImageUpload($event)" multiple class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+      </div>
+  
+      <div class="mb-4"> 
+        <label class="block text-gray-700 font-medium mb-2">Poids estimé (g) (min 1000g)</label>
+        <input type="number" formControlName="estimatedWeight" class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+      </div>
+  
+      <div class="mb-4">
+        <label class="block text-gray-700 font-medium mb-2">Adresse</label>
+        <input type="text" formControlName="address" class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+      </div>
+  
+      <div class="mb-4">
+        <label class="block text-gray-700 font-medium mb-2">Créneau horaire (entre 09h00 et 18h00)</label>
+        <input type="time" formControlName="timeSlot" class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <div *ngIf="editForm.controls['timeSlot'].hasError('invalidTime')" class="text-red-600 text-sm mt-1">
+          L'heure doit être entre 09h00 et 18h00.
+        </div>
+      </div>
+  
+      <div class="mb-4">
+        <label class="block text-gray-700 font-medium mb-2">Notes supplémentaires (optionnel)</label>
+        <textarea formControlName="notes" class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" rows="4"></textarea>
+      </div>
+  
+      <div class="flex justify-end space-x-4 mt-6">
+        <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200">
+          Enregistrer
+        </button>
+        <button type="button" (click)="cancelEdit()" class="px-6 py-2 bg-gray-500 text-white rounded-md text-sm hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 transition duration-200">
+          Annuler
+        </button>
+      </div>
+    </form>
+  </div>
+  
