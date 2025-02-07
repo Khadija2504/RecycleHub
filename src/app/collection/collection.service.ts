@@ -126,9 +126,19 @@ export class CollectionService {
   }
 
   updateRequest(requestId: number, updatedData: any): void {
-    const index = this.requests.findIndex((request) => request.id === requestId);
-    if (index !== -1) {
-      this.requests[index] = { ...this.requests[index], ...updatedData };
+    const request = this.requests.find((req) => req.id === requestId);
+    if (request) {
+      // Update waste items with verification data
+      request.wasteItems = request.wasteItems.map((item: any, index: number) => ({
+        ...item,
+        actualWeight: updatedData.wasteItems[index].actualWeight,
+        verifiedType: updatedData.wasteItems[index].wasteType
+      }));
+      
+      // Update other fields
+      request.images = updatedData.images || request.images;
+      request.status = updatedData.status || request.status;
+      
       this.saveRequests();
     } else {
       console.error(`Request with ID ${requestId} not found.`);
