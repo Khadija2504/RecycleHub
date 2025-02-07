@@ -40,6 +40,13 @@
           Accepter la collecte
         </button>
         <button
+          *ngIf="request.status === 'occupée'"
+          (click)="updateStatus(request.id, 'rejetée')"
+          class="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors"
+        >
+        rejeter la collecte
+        </button>
+        <button
           *ngIf="request.status === 'occupée' || request.status === 'en cours'"
           (click)="openValidationModal(request)"
           class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
