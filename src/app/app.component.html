@@ -1,17 +1,29 @@
 <nav *ngIf="isLoggedIn" class="bg-gradient-to-r from-teal-400 to-blue-600 text-white py-3 px-6 rounded-lg shadow-xl flex justify-between items-center">
-    <div class="flex space-x-8">
+    <div class="flex space-x-8 items-center">
         <ng-container *ngIf="hasRole('Individual')">
-            <a routerLink="/auth/register" class="text-lg font-semibold hover:text-yellow-300 transition duration-200">Register</a>
             <a routerLink="/collection/collections-list" class="text-lg font-semibold hover:text-yellow-300 transition duration-200">Collections List</a>
             <a routerLink="/collection/collection-request" class="text-lg font-semibold hover:text-yellow-300 transition duration-200">Collection Request</a>
+            
+            <div class="flex items-center space-x-2">
+                <span class="text-lg font-semibold">Points:</span>
+                <span class="text-lg font-bold text-yellow-300">{{ userPoints }}</span>
+            </div>
         </ng-container>
+        
         <ng-container *ngIf="hasRole('Collector')">
             <a routerLink="/collection/requests-list" class="text-lg font-semibold hover:text-yellow-300 transition duration-200">Requests List</a>
-            <a routerLink="/collection/pending-requests" class="text-lg font-semibold hover:text-yellow-300 transition duration-200">pending requests</a>
+            <a routerLink="/collection/pending-requests" class="text-lg font-semibold hover:text-yellow-300 transition duration-200">Pending Requests</a>
         </ng-container>
     </div>
+    
     <button (click)="logout()" class="bg-yellow-500 hover:bg-yellow-400 text-white font-bold py-2 px-6 rounded-full shadow-md hover:shadow-lg transition duration-300">
       Logout
     </button>
 </nav>
+
+<nav *ngIf="!isLoggedIn" class="bg-gradient-to-r from-teal-400 to-blue-600 text-white py-3 px-6 rounded-lg shadow-xl flex justify-between items-center">
+    <a routerLink="/auth/register" class="text-lg font-semibold hover:text-yellow-300 transition duration-200">Register</a>
+    <a routerLink="/auth/login" class="text-lg font-semibold hover:text-yellow-300 transition duration-200">Login</a>
+</nav>
+
   <router-outlet />

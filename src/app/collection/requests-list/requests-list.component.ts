@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
 import { CollectionService } from '../collection.service';
+import { AuthService } from '../../auth/auth.service';
 
 @Component({
   selector: 'app-requests-list',
   standalone: false,
   templateUrl: './requests-list.component.html',
-  styleUrls: ['./requests-list.component.css'], // Fixed property name
+  styleUrls: ['./requests-list.component.css'],
 })
 export class RequestsListComponent {
   collectionRequests: any[] = [];
@@ -24,7 +25,17 @@ export class RequestsListComponent {
   };
   selectedRequest: any = null;
 
-  constructor(private collectionService: CollectionService) {}
+  private readonly pointsMap: { [key: string]: number } = {
+    'Plastic': 2,
+    'Glass': 1,
+    'Paper': 1,
+    'Metal': 5
+  };
+
+  constructor(
+    private collectionService: CollectionService, 
+    private authService: AuthService,
+  ) {}
 
   ngOnInit(): void {
     this.loadUserRequests();
@@ -84,23 +95,43 @@ export class RequestsListComponent {
     );
 
     if (!isValid) {
-      alert('Veuillez remplir tous les champs obligatoires pour chaque type de déchet.');
+      alert('Please fill all required fields for each waste type.');
       return;
     }
 
-    const updatedData = {
-      wasteItems: this.selectedRequest.wasteItems.map((item: any, index: number) => ({
+    let totalPoints = 0;
+    const updatedWasteItems = this.selectedRequest.wasteItems.map((item: any, index: number) => {
+      const actualWeight = this.validationData.wasteItems[index].actualWeight || 0;
+      const weightKg = actualWeight / 1000;
+      const points = Math.round(weightKg * this.pointsMap[item.wasteType]);
+      totalPoints += points;
+
+      return {
         ...item,
-        actualWeight: this.validationData.wasteItems[index].actualWeight,
-        verifiedType: this.validationData.wasteItems[index].wasteType
-      })),
+        actualWeight: actualWeight,
+        verifiedType: this.validationData.wasteItems[index].wasteType,
+        points: points
+      };
+    });
+
+    const targetUserEmail = this.selectedRequest.userEmail;
+    
+    this.authService.updateUserPoints(totalPoints, targetUserEmail);
+
+    const updatedData = {
+      wasteItems: updatedWasteItems,
       images: this.validationData.images,
-      status: this.allItemsVerified() ? 'validée' : 'rejetée'
+      status: this.allItemsVerified() ? 'validée' : 'rejetée',
+      totalPoints: totalPoints
     };
 
     this.collectionService.updateRequest(this.selectedRequest.id, updatedData);
     this.closeValidationModal();
     this.loadUserRequests();
+  }
+
+  private calculatePoints(wasteType: string, weightKg: number): number {
+    return Math.round(weightKg * (this.pointsMap[wasteType] || 0));
   }
 
   private allItemsVerified(): boolean {
