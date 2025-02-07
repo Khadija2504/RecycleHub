@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AuthService } from './auth/auth.service';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -8,16 +9,24 @@ import { Router } from '@angular/router';
   standalone: false,
   styleUrl: './app.component.css'
 })
-export class AppComponent {
+export class AppComponent implements OnInit, OnDestroy {
   isLoggedIn: boolean = false;
   userRole: string | null = null;
+  userPoints: number = 0;
+  private userSub!: Subscription;
 
-  constructor(private authService: AuthService, private router:Router) {}
+  constructor(private authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {
-    this.checkLoginStatus();
-    this.isLoggedIn = this.authService.isLoggedIn();
-    this.userRole = this.authService.getUserRole();
+    this.userSub = this.authService.getCurrentUserObservable().subscribe(user => {
+      this.isLoggedIn = !!user;
+      this.userRole = user?.role;
+      this.userPoints = user?.points || 0;
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.userSub.unsubscribe();
   }
 
   checkLoginStatus(): void {

@@ -19,7 +19,8 @@ export class AuthService {
       address: 'casablanca',
       birthDate: '1990-01-01',
       profilePhoto: 'url-to-photo',
-      role: 'Collector'
+      role: 'Collector',
+      points: 0
     },
     {
       firstName: 'Jane',
@@ -30,11 +31,14 @@ export class AuthService {
       address: 'safi',
       birthDate: '1985-05-10',
       profilePhoto: 'url-to-photo',
-      role: 'Collector'
+      role: 'Collector',
+      points: 0
     }
   ];
   private usersSubject = new BehaviorSubject<any[]>(this.loadUsers());
   users$ = this.usersSubject.asObservable();
+
+  private currentUserSubject = new BehaviorSubject<any>(this.loggedinUser());
 
   constructor() {
     if (this.loadUsers().length === 0) {
@@ -68,9 +72,21 @@ export class AuthService {
 
   registerUser(user: any): void {
     const users = this.loadUsers();
-    users.push(user);
+    const newUser = { ...user, points: 0 };
+    users.push(newUser);
     this.saveUsers(users);
     this.usersSubject.next(users);
+  }
+
+  login(email: string, password: string): boolean {
+    const users = this.loadUsers();
+    const user = users.find(u => u.email === email && u.password === password);
+    if (user) {
+      localStorage.setItem(this.currentUser, JSON.stringify(user));
+      this.currentUserSubject.next(user);
+      return true;
+    }
+    return false;
   }
 
   getUserRole(): string | null {
@@ -97,4 +113,35 @@ export class AuthService {
   logout() {
     localStorage.removeItem('currentUser');
   }
+
+  updateUserPoints(newPoints: number, targetUserEmail: string): void {
+    const allUsers = this.loadUsers();
+    const targetUser = allUsers.find(user => user.email === targetUserEmail);
+    
+    if (!targetUser) {
+        console.error('User not found with email:', targetUserEmail);
+        return;
+    }
+
+    const updatedUsers = allUsers.map(user => {
+        if (user.email === targetUserEmail) {
+            const newTotal = (user.points || 0) + newPoints;
+            return { ...user, points: newTotal };
+        }
+        return user;
+    });
+
+    this.saveUsers(updatedUsers);
+
+    const currentUser = this.loggedinUser();
+    if (currentUser?.email === targetUserEmail) {
+        const updatedCurrentUser = { ...currentUser, points: (currentUser.points || 0) + newPoints };
+        localStorage.setItem(this.currentUser, JSON.stringify(updatedCurrentUser));
+        this.currentUserSubject.next(updatedCurrentUser);
+    }
+}
+
+getCurrentUserObservable(): Observable<any> {
+    return this.currentUserSubject.asObservable();
+}
 }

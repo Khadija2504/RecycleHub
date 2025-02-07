@@ -100,23 +100,21 @@ export class CollectionRequestComponent implements OnInit {
       alert('Le poids total doit être entre 1000g et 10000g.');
       return;
     }
-
+  
     const newRequest = {
       ...this.collectionForm.value,
       id: Date.now(),
       status: 'en attente'
     };
   
-    this.collectionForm.patchValue({ status: 'en attente' });
-    this.collectionService.addRequest(this.collectionForm.value);
-  
-    console.log("Collection Request:", this.collectionForm.value);
+    this.collectionService.addRequest(newRequest);
     alert('Demande de collecte soumise avec succès !');
+    
     this.collectionForm.reset();
-  }
-
-  deleteRequest(requestId: number): void {
-    this.collectionService.deleteRequest(requestId);
-    this.loadExistingRequests();
+    const user = this.authService.loggedinUser();
+    this.collectionForm.patchValue({
+      userEmail: user?.email,
+      status: 'en attente'
+    });
   }
 }
