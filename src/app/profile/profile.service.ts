@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { map } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -10,6 +11,18 @@ export class ProfileService {
   getCurrentUser(): any {
     const user = localStorage.getItem(this.currentUserKey);
     return user ? JSON.parse(user) : null;
+  }
+
+  deleteUserProfile(email: string): void {
+    let users = this.loadUsers();
+    const currentUser = this.getCurrentUser();
+
+    if (!currentUser || currentUser.email !== email) return;
+
+    users = users.filter(user => user.email !== email);
+    
+    localStorage.setItem(this.usersKey, JSON.stringify(users));
+    localStorage.removeItem(this.currentUserKey);
   }
 
   updateUser(updatedData: any): void {
