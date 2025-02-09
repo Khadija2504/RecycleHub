@@ -39,20 +39,38 @@ export class RegisterComponent implements OnInit {
       this.errorMessage = "Please fill in all required fields.";
       return;
     }
-
+  
     const formData = this.registerForm.value;
-
+  
     if (this.authService.emailExists(formData.email)) {
       this.errorMessage = "This email is already in use.";
       return;
     }
-
-    this.authService.registerUser(formData);
-
-    this.registerForm.reset();
-    this.errorMessage = "";
-    alert("Registration successful!");
-    this.router.navigate(['/auth/login']);
+  
+    const profilePhotoFile = this.registerForm.get('profilePhoto')?.value;
+    if (profilePhotoFile) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const base64Image = reader.result as string;
+        const userData = {
+          ...formData,
+          profilePhoto: base64Image
+        };
+  
+        this.authService.registerUser(userData);
+        this.registerForm.reset();
+        this.errorMessage = "";
+        alert("Registration successful!");
+        this.router.navigate(['/auth/login']);
+      };
+      reader.readAsDataURL(profilePhotoFile);
+    } else {
+      this.authService.registerUser(formData);
+      this.registerForm.reset();
+      this.errorMessage = "";
+      alert("Registration successful!");
+      this.router.navigate(['/auth/login']);
+    }
   }
 
   onFileSelected(event: any) {
@@ -60,10 +78,10 @@ export class RegisterComponent implements OnInit {
     if (file) {
       const reader = new FileReader();
       reader.onload = (e: any) => {
-        this.profilePhotoUrl = e.target.result;  
+        this.profilePhotoUrl = e.target.result;
       };
       reader.readAsDataURL(file);
-      this.registerForm.controls['profilePhoto'].setValue(file);
+      this.registerForm.get('profilePhoto')?.setValue(file);
     }
   }
 

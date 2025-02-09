@@ -152,9 +152,10 @@
                 <input type="file" (change)="onFileSelected($event)" class="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-xs"/>
                 <img *ngIf="profilePhotoUrl" [src]="profilePhotoUrl" alt="Profile Photo" width="100" />
               <input
-                type="file" (change)="onFileSelected($event)"
-                id="profilePhoto"
-                formControlName="profilePhoto"
+              type="file" 
+              id="profilePhoto" 
+              (change)="onFileSelected($event)"
+              accept="image/*"
                 class="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-xs"
               />
             </div>
