@@ -144,4 +144,54 @@ export class AuthService {
 getCurrentUserObservable(): Observable<any> {
     return this.currentUserSubject.asObservable();
 }
+
+convertPointsToVoucher(userEmail: string, points: number): { success: boolean, message: string } {
+  const allUsers = this.loadUsers();
+  const user = allUsers.find(u => u.email === userEmail);
+
+  if (!user) {
+    return { success: false, message: 'Utilisateur non trouvé.' };
+  }
+
+  if (user.points < points) {
+    return { success: false, message: 'Points insuffisants pour la conversion.' };
+  }
+
+  const voucherRates = [
+    { points: 100, value: 50 },
+    { points: 200, value: 120 },
+    { points: 500, value: 350 }
+  ];
+
+  const bestVoucher = voucherRates
+    .filter(rate => points >= rate.points)
+    .sort((a, b) => b.points - a.points)[0];
+
+  if (!bestVoucher) {
+    return { success: false, message: 'Le nombre de points ne correspond à aucun bon d\'achat.' };
+  }
+
+  user.points -= bestVoucher.points;
+  user.vouchers = user.vouchers || [];
+  user.vouchers.push({
+    value: bestVoucher.value,
+    date: new Date().toISOString(),
+    code: this.generateVoucherCode()
+  });
+
+  const updatedUsers = allUsers.map(u => (u.email === userEmail ? user : u));
+  this.saveUsers(updatedUsers);
+
+  const currentUser = this.loggedinUser();
+  if (currentUser?.email === userEmail) {
+    localStorage.setItem(this.currentUser, JSON.stringify(user));
+    this.currentUserSubject.next(user);
+  }
+
+  return { success: true, message: `Bon d'achat de ${bestVoucher.value} Dh généré avec succès.` };
+}
+
+private generateVoucherCode(): string {
+  return 'VOUCHER-' + Math.random().toString(36).substring(2, 10).toUpperCase();
+}
 }

@@ -3,13 +3,13 @@
         <ng-container *ngIf="hasRole('Individual')">
             <a routerLink="/collection/collections-list" class="text-lg font-semibold hover:text-yellow-300 transition duration-200">Collections List</a>
             <a routerLink="/collection/collection-request" class="text-lg font-semibold hover:text-yellow-300 transition duration-200">Collection Request</a>
-            
+            <a routerLink="/profile/voucher-conversion" class="text-lg font-semibold hover:text-yellow-300 transition duration-200">voucher conversion</a>
             <div class="flex items-center space-x-2">
                 <span class="text-lg font-semibold">Points:</span>
                 <span class="text-lg font-bold text-yellow-300">{{ userPoints }}</span>
             </div>
         </ng-container>
-        
+        <a routerLink="/profile" class="text-lg font-semibold hover:text-yellow-300 transition duration-200">Profile</a>
         <ng-container *ngIf="hasRole('Collector')">
             <a routerLink="/collection/requests-list" class="text-lg font-semibold hover:text-yellow-300 transition duration-200">Requests List</a>
             <a routerLink="/collection/pending-requests" class="text-lg font-semibold hover:text-yellow-300 transition duration-200">Pending Requests</a>

@@ -4,18 +4,21 @@ import { CommonModule } from '@angular/common';
 import { ProfileRoutingModule } from './profile-routing.module';
 import { UserDetailsComponent } from './user-details/user-details.component';
 import { UpdateProfileComponent } from './update-profile/update-profile.component';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { VoucherConversionComponent } from './voucher-conversion/voucher-conversion.component';
 
 
 @NgModule({
   declarations: [
     UserDetailsComponent,
-    UpdateProfileComponent
+    UpdateProfileComponent,
+    VoucherConversionComponent
   ],
   imports: [
     CommonModule,
     ProfileRoutingModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    FormsModule
   ]
 })
 export class ProfileModule { }

@@ -11,13 +11,22 @@
             />
           </div>
       </div>
+
+    <div *ngIf="hasRole('Individual')" class="mt-6">
+      <h3 class="text-lg font-semibold mb-2">Mes Bons d'Achat :</h3>
+      <div *ngIf="user.vouchers?.length > 0; else noVouchers">
+        <div *ngFor="let voucher of user.vouchers" class="p-4 mb-2 bg-gray-100 rounded-md">
+          <p class="font-medium">Valeur : {{ voucher.value }} Dh</p>
+          <p class="text-sm">Code : {{ voucher.code }}</p>
+          <p class="text-sm">Date : {{ voucher.date | date }}</p>
+        </div>
+      </div>
+      <ng-template #noVouchers>
+        <p class="text-gray-600">Aucun bon d'achat disponible.</p>
+      </ng-template>
+    </div>
   
       <div>
-        <strong
-          class="rounded-sm border border-indigo-500 bg-indigo-500 px-3 py-1.5 text-[10px] font-medium text-white"
-        >
-          Episode #101
-        </strong>
   
         <h3 class="mt-4 text-lg font-medium sm:text-xl">
           <p class="hover:underline"> {{ user.firstName }} {{ user.lastName }} </p>

@@ -1,0 +1,36 @@
+<div class="voucher-conversion-container p-6 bg-white rounded-lg shadow-md">
+    <h2 class="text-2xl font-semibold mb-4">Conversion des Points</h2>
+  
+    <div class="mb-4">
+      <label class="block text-sm font-medium text-gray-700">Points à convertir :</label>
+      <input
+        type="number"
+        [(ngModel)]="pointsToConvert"
+        class="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+        placeholder="Entrez le nombre de points"
+      />
+    </div>
+  
+    <button
+      (click)="convertPoints()"
+      class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+    >
+      Convertir en Bon d'Achat
+    </button>
+  
+    <div *ngIf="conversionResult" class="mt-4 p-4 rounded-md" [ngClass]="{
+      'bg-green-100 text-green-700': conversionResult.success,
+      'bg-red-100 text-red-700': !conversionResult.success
+    }">
+      {{ conversionResult.message }}
+    </div>
+  
+    <div class="mt-6">
+      <h3 class="text-lg font-semibold mb-2">Taux de Conversion :</h3>
+      <ul class="list-disc list-inside">
+        <li>100 points = 50 Dh</li>
+        <li>200 points = 120 Dh</li>
+        <li>500 points = 350 Dh</li>
+      </ul>
+    </div>
+  </div>
