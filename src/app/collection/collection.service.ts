@@ -90,6 +90,19 @@ export class CollectionService {
     return userRequests;
   }
 
+  getAllRequests() : any[] {
+    if(!Array.isArray(this.requests)) {
+      console.error('this.requests is not an array!', this.requests);
+      return [];
+    }
+    const email = this.loggedinUser()?.email;
+    const userRequests = this.requests.filter(
+      request => request.userEmail == email
+    );
+
+    return userRequests;
+  }
+
   getAllUserRequests() : any[] {
     console.log('requests:', this.requests);
     if (!Array.isArray(this.requests)) {
@@ -104,12 +117,10 @@ export class CollectionService {
       request => request.address === address
     );
 
-    console.log(this.requests.filter(
-      request => request.id === 18
-    )
-);
+    // console.log(this.requests.filter(
+    //   request => request.id === 18
+    // ));
     
-
     // console.log('filtered requests:', userRequests);
     return userRequests;
   }
