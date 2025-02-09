@@ -18,7 +18,7 @@ export class CollectionsListComponent implements OnInit {
   }
 
   loadUserRequests(): void {
-    this.collectionRequests = this.collectionService.getUserRequests();
+    this.collectionRequests = this.collectionService.getAllRequests();
   }
 
   getTotalWeight(wasteItems: any[]): number {

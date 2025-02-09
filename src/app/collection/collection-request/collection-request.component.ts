@@ -94,6 +94,11 @@ export class CollectionRequestComponent implements OnInit {
       alert('Veuillez remplir tous les champs correctement.');
       return;
     }
+
+    if(this.collectionService.getUserRequests().length > 3) {
+      alert('Vous n\'avez pas d\'ajouter plus de trois collectes en attente');
+      return;
+    }
   
     const totalWeight = this.getTotalWeight();
     if (totalWeight < 1000 || totalWeight > 10000) {
