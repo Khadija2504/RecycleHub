@@ -26,6 +26,10 @@ export class LoginComponent implements OnInit {
     });
   }
 
+  hasRole(role: string): boolean {
+    return this.authService.getUserRole() === role;
+  }
+
   login() {
     if (this.loginForm.invalid) {
       this.errorMessage = "Please enter a valid email and password.";
@@ -41,7 +45,11 @@ export class LoginComponent implements OnInit {
       if (user) {
         localStorage.setItem('currentUser', JSON.stringify(user));
         alert("Login successful!");
-        this.router.navigate(['/dashboard']);
+        if(this.hasRole('Individual')){
+          this.router.navigate(['/collection/collections-list']);
+        } else if(this.hasRole('Collector')){
+          this.router.navigate(['/collection/requests-list'])
+        }
       } else {
         this.errorMessage = "Invalid email or password.";
       }
