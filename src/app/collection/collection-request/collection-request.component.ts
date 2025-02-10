@@ -23,7 +23,7 @@ export class CollectionRequestComponent implements OnInit {
       notes: [''],
       status: ['en attente'],
       userEmail: [user?.email],
-      images: [[]]
+      images: this.fb.array([])
     });
   }
 
@@ -52,17 +52,21 @@ export class CollectionRequestComponent implements OnInit {
 
   onFileSelected(event: any): void {
     const files = event.target.files;
-    if (!files || files.length === 0) {
-      return;
-    }
-  
+    if (!files || files.length === 0) return;
+
+    this.selectedImages = [];
+    const imagesControl = this.collectionForm.get('images') as FormArray;
+    imagesControl.clear();
+
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       const reader = new FileReader();
-  
+
       reader.onload = (e) => {
         if (e.target?.result) {
-          this.selectedImages.push(e.target.result as string);
+          const imageData = e.target.result as string;
+          this.selectedImages.push(imageData);
+          imagesControl.push(this.fb.control(imageData));
         }
       };
   
@@ -109,17 +113,18 @@ export class CollectionRequestComponent implements OnInit {
     const newRequest = {
       ...this.collectionForm.value,
       id: Date.now(),
-      status: 'en attente'
+      status: 'en attente',
+      images: this.collectionForm.value.images
     };
-  
+
     this.collectionService.addRequest(newRequest);
-    alert('Demande de collecte soumise avec succès !');
     
-    this.collectionForm.reset();
-    const user = this.authService.loggedinUser();
-    this.collectionForm.patchValue({
-      userEmail: user?.email,
-      status: 'en attente'
+    this.collectionForm.reset({
+      wasteItems: this.fb.array([this.createWasteItem()]),
+      status: 'en attente',
+      userEmail: this.authService.loggedinUser()?.email,
+      images: []
     });
+    this.selectedImages = [];
   }
 }

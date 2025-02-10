@@ -126,8 +126,13 @@ export class CollectionService {
   }
 
   addRequest(requestData: any): void {
-    requestData.id = this.requestId++;
-    this.requests.push(requestData);
+    const cleanRequest = {
+      ...requestData,
+      images: requestData.images ? [...requestData.images] : []
+    };
+    
+    cleanRequest.id = this.requestId++;
+    this.requests.push(cleanRequest);
     this.saveRequests();
   }
 
