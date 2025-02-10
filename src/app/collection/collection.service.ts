@@ -144,14 +144,15 @@ export class CollectionService {
   updateRequest(requestId: number, updatedData: any): void {
     const request = this.requests.find((req) => req.id === requestId);
     if (request) {
-      request.wasteItems = request.wasteItems.map((item: any, index: number) => ({
-        ...item,
-        actualWeight: updatedData.wasteItems[index].actualWeight,
-        verifiedType: updatedData.wasteItems[index].wasteType
-      }));
-      
-      request.images = updatedData.images || request.images;
+      request.address = updatedData.address || request.address;
+      request.timeSlot = updatedData.timeSlot || request.timeSlot;
+      request.notes = updatedData.notes || request.notes;
       request.status = updatedData.status || request.status;
+      request.userEmail = updatedData.userEmail || request.userEmail;
+      
+      request.wasteItems = updatedData.wasteItems;
+  
+      request.images = updatedData.images;
       
       this.saveRequests();
     } else {
