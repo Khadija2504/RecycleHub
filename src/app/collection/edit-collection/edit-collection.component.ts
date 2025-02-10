@@ -44,6 +44,7 @@ export class EditCollectionComponent implements OnInit {
     return this.fb.group({
       wasteType: ['', Validators.required],
       estimatedWeight: ['', [Validators.required, Validators.min(1000)]],
+      isNew: [true]
     });
   }
 
@@ -92,47 +93,60 @@ export class EditCollectionComponent implements OnInit {
   loadRequestForEdit(requestId: number): void {
     const request = this.collectionService.getRequestById(requestId);
     if (request) {
+      // Reset form array completely
       while (this.wasteItems.length) {
         this.wasteItems.removeAt(0);
       }
-
+  
+      // Rebuild form array from request data
+      request.wasteItems.forEach((item: any) => {
+        const wasteItemGroup = this.createWasteItem();
+        wasteItemGroup.patchValue({
+          wasteType: item.wasteType,
+          estimatedWeight: item.estimatedWeight
+        });
+        this.wasteItems.push(wasteItemGroup);
+      });
+  
+      // Load other values
       this.collectionForm.patchValue({
         address: request.address,
         timeSlot: request.timeSlot,
         notes: request.notes,
         status: request.status,
         userEmail: request.userEmail,
-        images: request.images,
+        images: request.images || []
       });
-
-      request.wasteItems.forEach((item: any) => {
-        const wasteItemGroup = this.createWasteItem();
-        wasteItemGroup.patchValue(item);
-        this.wasteItems.push(wasteItemGroup);
-      });
-
       this.selectedImages = request.images || [];
-    } else {
-      console.error('Request not found');
     }
   }
 
+  removeImage(index: number): void {
+    this.selectedImages.splice(index, 1);
+  }
+
   submitRequest(): void {
+    this.collectionForm.patchValue({
+      images: this.selectedImages
+    });
+  
     if (this.collectionForm.invalid) {
+      Object.values(this.collectionForm.controls).forEach(control => {
+        control.markAsTouched();
+      });
       alert('Veuillez remplir tous les champs correctement.');
       return;
     }
-
-    const totalWeight = this.getTotalWeight();
-    if (totalWeight < 1000 || totalWeight > 10000) {
-      alert('Le poids total doit être entre 1000g et 10000g.');
-      return;
-    }
-
+  
+    const formData = {
+      ...this.collectionForm.value,
+      id: this.requestId
+    };
+  
     if (this.requestId) {
-      this.collectionService.updateRequest(this.requestId, this.collectionForm.value);
+      this.collectionService.updateRequest(this.requestId, formData);
       alert('Demande de collecte mise à jour avec succès !');
-      this.router.navigate(['/collection/requests-list']);
+      this.router.navigate(['/collection/collections-list']);
     } else {
       alert('ID de demande invalide.');
     }
